@@ -1,0 +1,16 @@
+{
+  "name": "assignment-g",
+  "version": "0.1.0",
+  "description": "Setting up a node.js server",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "nodejs",
+    "server",
+    "http"
+  ],
+  "author": "tobisupreme",
+  "license": "MIT"
+}
