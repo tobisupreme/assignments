@@ -1,10 +1,34 @@
 const http = require('http')
 
-function handleServerRequest(request, response) {
-  console.log(request)
-  response.writeHead(200)
-  response.write("Server chilling because I'm cool!\n")
-  response.end('Hello from the server side!')
+function createuser(req, res) {
+  res.writeHead(201)
+  const response = { message: 'You successfully sent a POST request to the route' }
+  res.end(JSON.stringify(response))
+}
+
+function getAllUsers(req, res) {
+  res.writeHead(200)
+  const response = { message: 'You successfully sent a GET request to the route' }
+  res.end(JSON.stringify(response))
+}
+
+function handleServerRequest(req, res) {
+  // Set response header
+  res.setHeader('Content-Type', 'application/json')
+
+  // 
+  if (req.url === '/users' && req.method === 'GET') {
+    getAllUsers(req, res)
+    return
+  }
+  if (req.url === '/users' && req.method === 'POST') {
+    createuser(req, res)
+    return
+  }
+
+  res.writeHead(404)
+  const response = { message: 'What are you talking about, bro?' }
+  res.end(JSON.stringify(response))
 }
 
 // Create server
