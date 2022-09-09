@@ -4,7 +4,8 @@
   "description": "Setting up a node.js server",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "dev": "nodemon index.js"
   },
   "keywords": [
     "nodejs",
@@ -12,5 +13,8 @@
     "http"
   ],
   "author": "tobisupreme",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
 }
