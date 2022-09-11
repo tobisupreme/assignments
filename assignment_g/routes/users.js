@@ -1,8 +1,9 @@
 const fs = require('fs')
 const path = require('path')
+const authenticate = require('../auth')
 
 // get path to users.json
-let userStorePath = path.dirname(__filename).split(path.sep).slice(0,-1)
+let userStorePath = path.dirname(__filename).split(path.sep).slice(0, -1)
 userStorePath.push('db', 'users.json')
 userStorePath = userStorePath.join(path.sep)
 
@@ -13,6 +14,16 @@ const existsInStore = (store, newValue) => {
     return true
   }
   return false
+}
+
+function login(req, res) {
+  authenticate(req, res)
+    .then((data) => {
+      res.end(JSON.stringify({ messge: `login as ${data.username} with role '${data.role}' successful` }))
+    })
+    .catch((err) => {
+      res.end(JSON.stringify(err))
+    })
 }
 
 function createUser(req, res) {
@@ -48,6 +59,7 @@ function createUser(req, res) {
           firstName: jsonData.firstName || '',
           lastName: jsonData.lastName || '',
           username: jsonData.username,
+          password: jsonData.password,
           email: jsonData.email,
           role: 'standard',
         }
@@ -65,7 +77,8 @@ function createUser(req, res) {
           res.end(JSON.stringify({ message: 'User successfully added', user: newUser }))
         })
         return
-      } else { // send response if user exists
+      } else {
+        // send response if user exists
         res.writeHead(400)
         res.end(JSON.stringify({ error: `The username ${jsonData.username} is already taken` }))
         return
@@ -80,4 +93,4 @@ function getAllUsers(req, res) {
   res.end(JSON.stringify(response))
 }
 
-module.exports = { createUser, getAllUsers }
+module.exports = { createUser, login, getAllUsers }
