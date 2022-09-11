@@ -28,8 +28,14 @@ function handleServerRequest(req, res) {
   }
 
   // books route(s)
-  if (REQ_URL === '/books/create' && REQ_METHOD === 'post') {
-    createBook(req, res)
+  if (REQ_URL === '/books/add' && REQ_METHOD === 'post') {
+    authenticate(req, res, ['admin'])
+      .then((data) => {
+        createBook(req, res, data)
+      })
+      .catch((err) => {
+        res.end(JSON.stringify({ error: 'corrupt data received' }))
+      })
     return
   }
   if (REQ_URL === '/books/delete' && REQ_METHOD === 'delete') {

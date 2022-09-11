@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const userStorePath = path.join(__dirname, 'db', 'users.json')
+const booksStorePath = path.join(__dirname, 'db', 'books.json')
 
 // get users from users.json
 function getUsers() {
@@ -10,6 +11,18 @@ function getUsers() {
         rej(err)
       }
       res(JSON.parse(users))
+    })
+  })
+}
+
+// get books from books.json
+function getBooks() {
+  return new Promise((res, rej) => {
+    fs.readFile(booksStorePath, 'utf-8', (err, books) => {
+      if (err) {
+        rej(err)
+      }
+      res(JSON.parse(books))
     })
   })
 }
@@ -34,7 +47,7 @@ function authenticate(req, res, role) {
     req.on('data', (chunk) => rawData.push(chunk))
     req.on('end', async () => {
       const data = Buffer.concat(rawData).toString()
-      const { userDetails } = JSON.parse(data)
+      const { userDetails, books } = JSON.parse(data)
       const parsedData = userDetails
 
       try {
@@ -49,7 +62,7 @@ function authenticate(req, res, role) {
           }
 
           if (role.includes(check.role)) {
-            resolve('correct credentials')
+            resolve(books)
             return
           }
 
@@ -70,4 +83,4 @@ function authenticate(req, res, role) {
   })
 }
 
-module.exports = { getUsers, existsInStore, authenticate }
+module.exports = { getUsers, existsInStore, authenticate, getBooks }
