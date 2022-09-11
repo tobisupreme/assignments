@@ -15,7 +15,7 @@ function handleServerRequest(req, res) {
     return
   }
   if (REQ_URL === '/users' && REQ_METHOD === 'get') {
-    authenticate(req, res, 'admin')
+    authenticate(req, res, ['admin'])
       .then(() => getAllUsers(req, res))
       .catch((err) => {
         res.end(JSON.stringify(err))

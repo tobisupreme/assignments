@@ -34,28 +34,36 @@ function authenticate(req, res, role) {
     req.on('data', (chunk) => rawData.push(chunk))
     req.on('end', async () => {
       const data = Buffer.concat(rawData).toString()
-      const parsedData = JSON.parse(data)
+      const { userDetails } = JSON.parse(data)
+      const parsedData = userDetails
 
-      // check for user with matching credentials
-      const check = users.find((user) => user.username.toLowerCase() === parsedData.username && user.password === parsedData.password)
+      try {
+        // check for user with matching credentials
+        const check = users.find((user) => user.username.toLowerCase() === parsedData.username && user.password === parsedData.password)
 
-      if (check) {
-        // if route is login
-        if (!role && req.url.toLowerCase() === '/login') {
-          resolve(check)
+        if (check) {
+          // if route is login
+          if (!role && req.url.toLowerCase() === '/login') {
+            resolve(check)
+            return
+          }
+
+          if (role.includes(check.role)) {
+            resolve('correct credentials')
+            return
+          }
+
+          res.writeHead(401)
+          reject({ error: 'insufficient priviledges' })
+          return
+        } else {
+          reject({ error: 'incorrect username or password' })
           return
         }
-
-        if (role === check.role) {
-          resolve('correct credentials')
-          return
-        } 
-
-        res.writeHead(401)
-        reject({ error: 'insufficient priviledges' })
-        return
-      } else {
-        reject({ error: 'incorrect username or password' })
+      } catch (err) {
+        // if login details are not provided
+        res.writeHead(400)
+        reject({ error: '?????' })
         return
       }
     })

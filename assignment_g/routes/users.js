@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const authenticate = require('../auth')
-const { getUsers, existsInStore } = require('../utils')
+const { authenticate, getUsers, existsInStore } = require('../utils')
 
 // get path to users.json
 let userStorePath = path.dirname(__filename).split(path.sep).slice(0, -1)
