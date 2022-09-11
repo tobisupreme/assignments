@@ -14,9 +14,18 @@ function getUsers() {
   })
 }
 
+// check for existing user
+const existsInStore = (store, newValue) => {
+  const check = store.find((user) => user.username.toLowerCase() === newValue.username.toLowerCase())
+  if (check) {
+    return true
+  }
+  return false
+}
+
 function authenticate(req, res, role) {
   return new Promise(async (resolve, reject) => {
-
+    console.log('authenticating...', req.url)
     // get users
     const users = await getUsers()
 
@@ -40,7 +49,11 @@ function authenticate(req, res, role) {
         if (role === check.role) {
           resolve('correct credentials')
           return
-        }
+        } 
+
+        res.writeHead(401)
+        reject({ error: 'insufficient priviledges' })
+        return
       } else {
         reject({ error: 'incorrect username or password' })
         return
@@ -49,4 +62,4 @@ function authenticate(req, res, role) {
   })
 }
 
-module.exports = authenticate
+module.exports = { getUsers, existsInStore, authenticate }

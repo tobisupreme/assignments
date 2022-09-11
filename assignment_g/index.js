@@ -1,7 +1,7 @@
 const http = require('http')
 const { createUser, login, getAllUsers } = require('./routes/users')
 const { createBook, deleteBook, loanOutBook, returnBook, updateBook } = require('./routes/books')
-const authenticate = require('./auth')
+const { authenticate } = require('./utils')
 
 function handleServerRequest(req, res) {
   // Set response header
@@ -15,10 +15,14 @@ function handleServerRequest(req, res) {
     return
   }
   if (REQ_URL === '/users' && REQ_METHOD === 'get') {
-    authenticate(req, res).then(() => getAllUsers(req, res))
+    authenticate(req, res, 'admin')
+      .then(() => getAllUsers(req, res))
+      .catch((err) => {
+        res.end(JSON.stringify(err))
+      })
     return
   }
-  if (REQ_URL === '/users/create' && REQ_METHOD === 'post') {
+  if (REQ_URL === '/register' && REQ_METHOD === 'post') {
     createUser(req, res)
     return
   }

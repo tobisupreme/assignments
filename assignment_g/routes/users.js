@@ -1,20 +1,12 @@
 const fs = require('fs')
 const path = require('path')
 const authenticate = require('../auth')
+const { getUsers, existsInStore } = require('../utils')
 
 // get path to users.json
 let userStorePath = path.dirname(__filename).split(path.sep).slice(0, -1)
 userStorePath.push('db', 'users.json')
 userStorePath = userStorePath.join(path.sep)
-
-// check for existing user
-const existsInStore = (store, newValue) => {
-  const check = store.find((user) => user.username.toLowerCase() === newValue.username.toLowerCase())
-  if (check) {
-    return true
-  }
-  return false
-}
 
 function login(req, res) {
   authenticate(req, res)
@@ -90,9 +82,13 @@ function createUser(req, res) {
   })
 }
 
-function getAllUsers(req, res) {
+async function getAllUsers(req, res) {
   res.writeHead(200)
   const response = { message: 'You successfully sent a GET request to the /users route' }
+  const users = {
+    users: await getUsers()
+  }
+  response.users = users
   res.end(JSON.stringify(response))
 }
 
