@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { authenticate, getBooks, existsInStore } = require('../utils')
+const { authenticate, getBooks, existsInStore, getMaxId } = require('../utils')
 
 // get path to books.json
 let booksStorePath = path.dirname(__filename).split(path.sep).slice(0, -1)
@@ -8,28 +8,45 @@ booksStorePath.push('db', 'books.json')
 booksStorePath = booksStorePath.join(path.sep)
 
 // create book
-function createBook(req, res, newBook) {
-  if (!newBook) {
+function createBook(req, res, { books }) {
+  console.log(books, '🎒 line 12')
+  // if request data isn't properly formatted
+  if (!books) {
     res.writeHead(400)
     throw new Error()
   }
 
   try {
-    fs.readFile(booksStorePath, 'utf-8', (err, data) => {
+    // get books in books.json
+    fs.readFile(booksStorePath, 'utf-8', async (err, data) => {
       if (err) {
         res.writeHead(500)
         res.end({ error: 'server error' })
         return
       }
 
-      const books = JSON.parse(data)
+      const dbBooks = JSON.parse(data)
+      const resBooks = []
 
-      for (let i = 0; i < newBook.length; i++) {
-        newBook[i].id = i + 1
-        books.push(newBook[i])
+      // get maximum id
+      let maxId = await getMaxId()
+
+      // add new book(s)
+      for (let i = 0; i < books.length; i++) {
+        maxId++
+        const newEntry = {
+          id: maxId,
+          author: books[i].author,
+          title: books[i].title,
+          year: books[i].year,
+          isLoaned: false,
+        }
+        dbBooks.push(newEntry)
+        resBooks.push(newEntry)
       }
 
-      fs.writeFile(booksStorePath, JSON.stringify(books), (err) => {
+      // save book(s)
+      fs.writeFile(booksStorePath, JSON.stringify(dbBooks), (err) => {
         if (err) {
           res.writeHead(500)
           res.end(JSON.stringify({ error: 'Internal Server Error. Could not save book(s)' }))
@@ -39,10 +56,7 @@ function createBook(req, res, newBook) {
         res.writeHead(201)
         const response = {}
         response.message = 'Successfully added book(s)'
-        response.books = []
-        for (let i = 0; i < newBook.length; i++) {
-          response.books.push(newBook[i])
-        }
+        response.books = resBooks
         res.end(JSON.stringify(response))
       })
     })

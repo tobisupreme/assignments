@@ -3,6 +3,13 @@ const path = require('path')
 const userStorePath = path.join(__dirname, 'db', 'users.json')
 const booksStorePath = path.join(__dirname, 'db', 'books.json')
 
+// get max book Id
+const getMaxId = async () => {
+  const books = await getBooks()
+  const maxId = books.length > 0 ? Math.max.apply(null, books.map((n) => n.id)) : 0
+  return maxId
+}
+
 // get users from users.json
 function getUsers() {
   return new Promise((res, rej) => {
@@ -47,7 +54,7 @@ function authenticate(req, res, role) {
     req.on('data', (chunk) => rawData.push(chunk))
     req.on('end', async () => {
       const data = Buffer.concat(rawData).toString()
-      const { userDetails, books } = JSON.parse(data)
+      const { userDetails, ...dataObject } = JSON.parse(data)
       const parsedData = userDetails
 
       try {
@@ -62,7 +69,7 @@ function authenticate(req, res, role) {
           }
 
           if (role.includes(check.role)) {
-            resolve(books)
+            resolve(dataObject)
             return
           }
 
@@ -76,11 +83,11 @@ function authenticate(req, res, role) {
       } catch (err) {
         // if login details are not provided
         res.writeHead(400)
-        reject({ error: '?????' })
+        reject({ error: 'Login details not provided' })
         return
       }
     })
   })
 }
 
-module.exports = { getUsers, existsInStore, authenticate, getBooks }
+module.exports = { getUsers, existsInStore, authenticate, getBooks, getMaxId }
