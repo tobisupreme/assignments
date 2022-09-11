@@ -58,7 +58,7 @@ This route is only accessible to users with the `admin` role
 
 To add books, send a `POST` request to the `/books/add` route. The body will contain a json with two keys `userDetails` and `books` respectively. The value of `userDetails` is an object which includes the username with key `username` and password with key `password`.
 
-The value of `books` is an array with object(s) containing details for the book(s) to add. 
+The value of `books` is an array with object(s) containing details for the book(s) to add.
 
 ```json
 {
@@ -73,5 +73,18 @@ The value of `books` is an array with object(s) containing details for the book(
       "year": "year book published"
     }
   ]
+}
+```
+
+### `/books/loanout/` route
+
+To borrow a book from the library, send a `POST` request to the route `/books/loanout/:id` where `:id` is the id of the book. The body will contain a json with key `userDetails`. This includes the username with key `username` and password with key `password`
+
+```json
+{
+  "userDetails": {
+    "username": "username",
+    "password": "user password"
+  }
 }
 ```

@@ -42,8 +42,12 @@ function handleServerRequest(req, res) {
     deleteBook(req, res)
     return
   }
-  if (REQ_URL === '/books/loanout' && REQ_METHOD === 'post') {
-    loanOutBook(req, res)
+  if (REQ_URL.startsWith('/books/loanout/') && REQ_METHOD === 'post') {
+    authenticate(req, res, ['admin', 'standard'])
+      .then((data) => loanOutBook(req, res))
+      .catch((err) => {
+        res.end(JSON.stringify({ error: 'server cannot process your request. Please try again later' }))
+      })
     return
   }
   if (REQ_URL === '/books/return' && REQ_METHOD === 'post') {

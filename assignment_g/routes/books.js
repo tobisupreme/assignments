@@ -75,10 +75,43 @@ function deleteBook(req, res) {
 }
 
 // loan out book
-function loanOutBook(req, res) {
-  res.writeHead(201)
-  const response = { message: 'You successfully sent a POST request to the books/loanout route' }
-  res.end(JSON.stringify(response))
+async function loanOutBook(req, res) {
+  try {
+    // get book id from request
+    const bookId = Number(req.url.split('out/')[1])
+
+    // get books from books.json
+    const dbBooks = await getBooks()
+
+    // check if isLoaned
+    const bookIndex = dbBooks.findIndex((book) => book.id === bookId)
+
+    if (dbBooks[bookIndex].isLoaned) {
+      res.writeHead(405)
+      const response = { message: `${bookToLoan.title} is currently out of the library` }
+      res.end(JSON.stringify(response))
+      return
+    }
+
+    // change isLoaned to true
+    dbBooks[bookIndex] = { ...dbBooks[bookIndex], isLoaned: true }
+
+    // save to books.json
+    fs.writeFile(booksStorePath, JSON.stringify(dbBooks), (err) => {
+      if (err) {
+        res.writeHead(500)
+        res.end({ error: 'server error' })
+        return
+      }
+
+      res.writeHead(202)
+      const response = { message: `Your request to borrow ${dbBooks[bookIndex].title} is accepted.` }
+      res.end(JSON.stringify(response))
+    })
+  } catch (err) {
+    res.writeHead(500)
+    throw new Error()
+  }
 }
 
 // return book
