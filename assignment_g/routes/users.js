@@ -74,12 +74,15 @@ function createUser(req, res) {
           }
 
           res.writeHead(201)
-          res.end(JSON.stringify({ message: 'User successfully added', user: newUser }))
+          const resUser = newUser
+          delete resUser.password
+          delete resUser.role
+          res.end(JSON.stringify({ message: 'User successfully added', user: resUser }))
         })
         return
       } else {
         // send response if user exists
-        res.writeHead(400)
+        res.writeHead(409)
         res.end(JSON.stringify({ error: `The username ${jsonData.username} is already taken` }))
         return
       }
