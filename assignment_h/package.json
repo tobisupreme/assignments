@@ -1,0 +1,24 @@
+{
+  "name": "assignment_h",
+  "version": "0.1.0",
+  "description": "This is [assignment G](../assignment_g/README.md) written in [Express](https://www.npmjs.com/package/express) with the following updates:",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "nodejs",
+    "server",
+    "http",
+    "express"
+  ],
+  "author": "tobisupreme",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
