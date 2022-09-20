@@ -4,8 +4,9 @@
   "description": "This is [assignment G](../assignment_g/README.md) written in [Express](https://www.npmjs.com/package/express) with the following updates:",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "dev": "nodemon index.js"
+    "test": "jest --detectOpenHandles",
+    "dev": "nodemon index.js",
+    "dev0": "nodemon server.js"
   },
   "keywords": [
     "nodejs",
@@ -16,7 +17,9 @@
   "author": "tobisupreme",
   "license": "MIT",
   "devDependencies": {
-    "nodemon": "^2.0.19"
+    "jest": "^29.0.3",
+    "nodemon": "^2.0.19",
+    "supertest": "^6.2.4"
   },
   "dependencies": {
     "express": "^4.18.1"
