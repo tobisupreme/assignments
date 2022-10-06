@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 
-const { connectDatabase } = require('./db')
+const { connectDatabase } = require('./config/db')
 connectDatabase()
 
 app.use(express.json())
